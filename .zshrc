@@ -139,3 +139,6 @@ export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 PATH=~/.console-ninja/.bin:$PATH
 
 eval "$(zoxide init --cmd cd zsh)"
+
+eval "$(atuin init zsh)"
+
