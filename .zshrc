@@ -1,14 +1,3 @@
-# Enable Powerlevel10k instant prompt. Should stay close to the top of ~/.zshrc.
-# Initialization code that may require console input (password prompts, [y/n]
-# confirmations, etc.) must go above this block; everything else may go below.
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-export ZSH="/Users/ciocan/.oh-my-zsh"
-ZSH_THEME="powerlevel10k/powerlevel10k"
-
-source $ZSH/oh-my-zsh.sh
 export PATH=/opt/homebrew/bin:$PATH
 export NODE_OPTIONS="--max-old-space-size=8192"
 
@@ -31,7 +20,6 @@ export WASMER_DIR="/Users/ciocan/.wasmer"
 export BUN_INSTALL="/Users/ciocan/.bun"
 export PATH="$BUN_INSTALL/bin:$PATH"
 
-#alias python='/opt/homebrew/Cellar/python@3.10/3.10.12_1/bin/python3.10'
 if command -v pyenv 1>/dev/null 2>&1; then
   eval "$(pyenv init -)"
 fi
@@ -48,12 +36,6 @@ export PATH="$PATH:/Users/ciocan/.pyenv/shims/sqlfluff"
 
 plugins=(git zsh-autosuggestions zsh-syntax-highlighting web-search) 
 
-
-source ~/powerlevel10k/powerlevel10k.zsh-theme
-# source /opt/homebrew/share/powerlevel10k/powerlevel10k.zsh-theme
-
-# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
-[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
 
 alias reload-zsh="source ~/.zshrc"
 alias edit-zsh="nvim ~/.zshrc"
@@ -143,6 +125,13 @@ export BAT_THEME=tokyonight_night
 
 alias ls="eza --icons=always"
 
+
+bindkey "$terminfo[kcuu1]" history-substring-search-up
+bindkey "$terminfo[kcud1]" history-substring-search-down
+bindkey -M vicmd 'k' history-substring-search-up
+bindkey -M vicmd 'j' history-substring-search-down
+
+
 # ---- TheFuck -----
 
 # thefuck alias
@@ -152,13 +141,32 @@ eval $(thefuck --alias fk)
 # ---- Zoxide (better cd) ----
 eval "$(zoxide init --cmd cd zsh)"
 
-# alias cd="z"
 alias cat="bat"
 alias vim="nvim"
 alias micro="nvim"
 alias mic="/usr/local/bin/micro"
+alias la=tree
 
-source .venv/bin/activate
+export EDITOR=/opt/homebrew/bin/nvim
+
+source ~/.venv/bin/activate
 source ~/.cloudify.openrc
 
 setopt completealiases
+
+eval "$(starship init zsh)"
+export STARSHIP_CONFIG=~/.config/starship.toml
+
+# Docker
+alias dco="docker compose"
+alias dps="docker ps"
+alias dpa="docker ps -a"
+alias dl="docker ps -l -q"
+alias dx="docker exec -it"
+
+alias cl='clear'
+
+alias ls="eza --icons=always"
+alias cat="bat"
+alias ll="ls -al"
+alias l="ls -al"
