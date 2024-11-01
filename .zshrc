@@ -1,5 +1,10 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/Users/ciocan/.zsh/completions:"* ]]; then export FPATH="/Users/ciocan/.zsh/completions:$FPATH"; fi
 export PATH=/opt/homebrew/bin:$PATH
 export NODE_OPTIONS="--max-old-space-size=8192"
+
+export HOMBREW_BIN=/opt/homebrew/bin/
+export PATH="$HOMBREW_BIN:$PATH"
 
 # pnpm
 export PNPM_HOME="/Users/ciocan/Library/pnpm"
@@ -25,7 +30,7 @@ if command -v pyenv 1>/dev/null 2>&1; then
 fi
 export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
-PATH=~/.console-ninja/.bin:$PATH
+
 
 export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
 export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
@@ -170,3 +175,4 @@ alias ls="eza --icons=always"
 alias cat="bat"
 alias ll="ls -al"
 alias l="ls -al"
+. "/Users/ciocan/.deno/env"
