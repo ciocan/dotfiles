@@ -143,6 +143,11 @@ config.keys = {
 	{ key = "s", mods = "CTRL|SHIFT", action = wezterm.action({ EmitEvent = "save_session" }) },
 	{ key = "l", mods = "CTRL|SHIFT", action = wezterm.action({ EmitEvent = "load_session" }) },
 	{ key = "r", mods = "CTRL|SHIFT", action = wezterm.action({ EmitEvent = "restore_session" }) },
+
+	-- Option+Left to send Alt+B (back word)
+	{ key = 'LeftArrow', mods = 'ALT', action = wezterm.action.SendString '\x1bb' },
+	-- Option+Right to send Alt+F (forward word)
+	{ key = 'RightArrow', mods = 'ALT', action = wezterm.action.SendString '\x1bf' },
 }
 
 config.enable_tab_bar = true

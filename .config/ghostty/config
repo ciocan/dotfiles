@@ -1,0 +1,4 @@
+font-family = "Hack Nerd Font Mono Regular"
+font-size = 26
+theme = Catppuccin Frappe
+keybind = shift+enter=text:\n

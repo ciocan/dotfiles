@@ -1,178 +1,129 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/Users/ciocan/.zsh/completions:"* ]]; then export FPATH="/Users/ciocan/.zsh/completions:$FPATH"; fi
-export PATH=/opt/homebrew/bin:$PATH
-export NODE_OPTIONS="--max-old-space-size=8192"
 
-export HOMBREW_BIN=/opt/homebrew/bin/
-export PATH="$HOMBREW_BIN:$PATH"
 
-# pnpm
-export PNPM_HOME="/Users/ciocan/Library/pnpm"
-case ":$PATH:" in
-  *":$PNPM_HOME:"*) ;;
-  *) export PATH="$PNPM_HOME:$PATH" ;;
-esac
-# pnpm end
+[ ! -f "$HOME/.x-cmd.root/X" ] || . "$HOME/.x-cmd.root/X" # boot up x-cmd.
 
-# Wasmer
-export WASMER_DIR="/Users/ciocan/.wasmer"
-[ -s "$WASMER_DIR/wasmer.sh" ] && source "$WASMER_DIR/wasmer.sh"
+# eval "$(starship init zsh)"
 
-# bun completions
-[ -s "/Users/ciocan/.bun/_bun" ] && source "/Users/ciocan/.bun/_bun"
-
-# Bun
-export BUN_INSTALL="/Users/ciocan/.bun"
-export PATH="$BUN_INSTALL/bin:$PATH"
-
-if command -v pyenv 1>/dev/null 2>&1; then
-  eval "$(pyenv init -)"
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
 fi
-export PATH="/opt/homebrew/opt/openjdk/bin:$PATH"
 
 
+export ZSH="$HOME/.oh-my-zsh"
 
-export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
-export PATH="/opt/homebrew/opt/postgresql@16/bin:$PATH"
+ZSH_THEME="robbyrussell"
 
-export PATH="$PATH:/Users/ciocan/.local/bin"
-export PATH="$PATH:/Users/ciocan/.pyenv/shims/sqlfluff"
+plugins=(git)
 
-
-plugins=(git zsh-autosuggestions zsh-syntax-highlighting web-search) 
+source $ZSH/oh-my-zsh.sh
 
 
-alias reload-zsh="source ~/.zshrc"
-alias edit-zsh="nvim ~/.zshrc"
+if [[ -f "/opt/homebrew/bin/brew" ]] then
+  # If you're using macOS, you'll want this enabled
+  eval "$(/opt/homebrew/bin/brew shellenv)"
+fi
 
-# history setup
-HISTFILE=$HOME/.zhistory
-SAVEHIST=1000
-HISTSIZE=999
-setopt share_history 
-setopt hist_expire_dups_first
+# Set the directory we want to store zinit and plugins
+ZINIT_HOME="${XDG_DATA_HOME:-${HOME}/.local/share}/zinit/zinit.git"
+
+# Download Zinit, if it's not there yet
+if [ ! -d "$ZINIT_HOME" ]; then
+   mkdir -p "$(dirname $ZINIT_HOME)"
+   git clone https://github.com/zdharma-continuum/zinit.git "$ZINIT_HOME"
+fi
+
+
+# Source/Load zinit
+source "${ZINIT_HOME}/zinit.zsh"
+
+
+export PATH="/opt/homebrew/opt/python/libexec/bin:$PATH"
+
+# Add in Powerlevel10k
+zinit ice depth=1; zinit light romkatv/powerlevel10k
+
+# Add in zsh plugins
+zinit light Aloxaf/fzf-tab
+zinit light zsh-users/zsh-syntax-highlighting
+zinit light zsh-users/zsh-completions
+zinit light zsh-users/zsh-autosuggestions
+
+
+# Add in snippets
+zinit snippet OMZL::git.zsh
+zinit snippet OMZP::git
+zinit snippet OMZP::sudo
+zinit snippet OMZP::archlinux
+zinit snippet OMZP::aws
+zinit snippet OMZP::kubectl
+zinit snippet OMZP::kubectx
+zinit snippet OMZP::command-not-found
+
+# Load completions
+autoload -Uz compinit && compinit
+
+zinit cdreplay -q
+
+
+# To customize prompt, run `p10k configure` or edit ~/.p10k.zsh.
+[[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+
+# Keybindings
+bindkey -e
+bindkey '^p' history-search-backward
+bindkey '^n' history-search-forward
+bindkey '^[w' kill-region
+
+# History
+HISTSIZE=5000
+HISTFILE=~/.zsh_history
+SAVEHIST=$HISTSIZE
+HISTDUP=erase
+setopt appendhistory
+setopt sharehistory
+setopt hist_ignore_space
+setopt hist_ignore_all_dups
+setopt hist_save_no_dups
 setopt hist_ignore_dups
-setopt hist_verify
+setopt hist_find_no_dups
 
-# completion using arrow keys (based on history)
-bindkey '^[[A' history-search-backward
-bindkey '^[[B' history-search-forward
+# Completion styling
+zstyle ':completion:*' matcher-list 'm:{a-z}={A-Za-z}'
+zstyle ':completion:*' list-colors "${(s.:.)LS_COLORS}"
+zstyle ':completion:*' menu no
+zstyle ':fzf-tab:complete:cd:*' fzf-preview 'ls --color $realpath'
+zstyle ':fzf-tab:complete:__zoxide_z:*' fzf-preview 'ls --color $realpath'
 
-source $(brew --prefix)/share/zsh-autosuggestions/zsh-autosuggestions.zsh
-source $(brew --prefix)/share/zsh-syntax-highlighting/zsh-syntax-highlighting.zsh
+# Aliases
+alias ls='ls --color'
+alias vim='nvim'
+alias c='clear'
 
-export NVM_DIR="$HOME/.nvm"
-[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
-[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-
-
-
-# ---- FZF -----
-
-# Set up fzf key bindings and fuzzy completion
+# Shell integrations
 eval "$(fzf --zsh)"
-
-# --- setup fzf theme ---
-fg="#CBE0F0"
-bg="#011628"
-bg_highlight="#143652"
-purple="#B388FF"
-blue="#06BCE4"
-cyan="#2CF9ED"
-
-export FZF_DEFAULT_OPTS="--color=fg:${fg},bg:${bg},hl:${purple},fg+:${fg},bg+:${bg_highlight},hl+:${purple},info:${blue},prompt:${cyan},pointer:${cyan},marker:${cyan},spinner:${cyan},header:${cyan}"
-
-# -- Use fd instead of fzf --
-
-export FZF_DEFAULT_COMMAND="fd --hidden --strip-cwd-prefix --exclude .git"
-export FZF_CTRL_T_COMMAND="$FZF_DEFAULT_COMMAND"
-export FZF_ALT_C_COMMAND="fd --type=d --hidden --strip-cwd-prefix --exclude .git"
-
-# Use fd (https://github.com/sharkdp/fd) for listing path candidates.
-# - The first argument to the function ($1) is the base path to start traversal
-# - See the source code (completion.{bash,zsh}) for the details.
-_fzf_compgen_path() {
-  fd --hidden --exclude .git . "$1"
-}
-
-# Use fd to generate the list for directory completion
-_fzf_compgen_dir() {
-  fd --type=d --hidden --exclude .git . "$1"
-}
-
-source ~/fzf-git.sh/fzf-git.sh
-
-show_file_or_dir_preview="if [ -d {} ]; then eza --tree --color=always {} | head -200; else bat -n --color=always --line-range :500 {}; fi"
-
-export FZF_CTRL_T_OPTS="--preview '$show_file_or_dir_preview'"
-export FZF_ALT_C_OPTS="--preview 'eza --tree --color=always {} | head -200'"
-
-# Advanced customization of fzf options via _fzf_comprun function
-# - The first argument to the function is the name of the command.
-# - You should make sure to pass the rest of the arguments to fzf.
-_fzf_comprun() {
-  local command=$1
-  shift
-
-  case "$command" in
-    cd)           fzf --preview 'eza --tree --color=always {} | head -200' "$@" ;;
-    export|unset) fzf --preview "eval 'echo \${}'"         "$@" ;;
-    ssh)          fzf --preview 'dig {}'                   "$@" ;;
-    *)            fzf --preview "$show_file_or_dir_preview" "$@" ;;
-  esac
-}
-
-# ----- Bat (better cat) -----
-
-export BAT_THEME=tokyonight_night
-
-# ---- Eza (better ls) -----
-
-alias ls="eza --icons=always"
+# eval "$(zoxide init --cmd cd zsh)"
 
 
-bindkey "$terminfo[kcuu1]" history-substring-search-up
-bindkey "$terminfo[kcud1]" history-substring-search-down
-bindkey -M vicmd 'k' history-substring-search-up
-bindkey -M vicmd 'j' history-substring-search-down
 
 
-# ---- TheFuck -----
+# eval "$(mcfly init zsh)"
 
-# thefuck alias
-eval $(thefuck --alias)
-eval $(thefuck --alias fk)
+eval "$(zoxide init zsh)"
+alias cd=z
 
-# ---- Zoxide (better cd) ----
-eval "$(zoxide init --cmd cd zsh)"
+alias ll="eza -al"
+alias ls=eza
 
-alias cat="bat"
-alias vim="nvim"
-alias micro="nvim"
-alias mic="/usr/local/bin/micro"
-alias la=tree
 
-export EDITOR=/opt/homebrew/bin/nvim
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/ciocan/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
 
-source ~/.venv/bin/activate
-source ~/.cloudify.openrc
+# Added by LM Studio CLI (lms)
+export PATH="$PATH:/Users/ciocan/.lmstudio/bin"
+# End of LM Studio CLI section
 
-setopt completealiases
+alias cat=bat
 
-eval "$(starship init zsh)"
-export STARSHIP_CONFIG=~/.config/starship.toml
-
-# Docker
-alias dco="docker compose"
-alias dps="docker ps"
-alias dpa="docker ps -a"
-alias dl="docker ps -l -q"
-alias dx="docker exec -it"
-
-alias cl='clear'
-
-alias ls="eza --icons=always"
-alias cat="bat"
-alias ll="ls -al"
-alias l="ls -al"
-. "/Users/ciocan/.deno/env"
